@@ -30,3 +30,16 @@ imfusion_compile_resource_repository(ConeCalibrationPluginResources
 		BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/model
 		COMPRESS
 		)
+
+set(IMFUSION_SUITE "/usr/bin/ImFusionSuite")
+
+include(CTest)
+enable_testing()
+add_test(NAME ImFusionSuite COMMAND ${IMFUSION_SUITE})
+
+set_tests_properties(
+  ImFusionSuite
+  PROPERTIES
+    ENVIRONMENT "LD_LIBRARY_PATH=/home/common/Qt/5.12.5/gcc_64/lib /usr/bin/ImFusionSuite;IMFUSION_PLUGIN_PATH=${CMAKE_BINARY_DIR}/lib"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)

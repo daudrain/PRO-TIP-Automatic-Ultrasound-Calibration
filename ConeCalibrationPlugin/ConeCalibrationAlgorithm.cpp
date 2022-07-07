@@ -146,18 +146,24 @@ namespace ImFusion
 
 	bool ConeCalibrationAlgorithm::createCompatible(const DataList& data, Algorithm** a)
 	{
-		if (data.size() < 2)
+		if (data.size() < 2) {
+			LOG_WARN("ConeCalibrationAlgorithm not enough data : " << data.size() << " found vs 2 minimum expected");
 			return false;
+		}
 		auto img = data.getImages(Data::IMAGESET, Data::ULTRASOUND);
-		if (img.size() != data.size())
+		if (img.size() != data.size()) {
+			LOG_WARN("ConeCalibrationAlgorithm img.size() " << img.size() << " != data.size() " << data.size());
 			return false;
+		}
 		std::vector<UltrasoundSweep*> sweeps(img.size(), nullptr);
 		for (int i = 0; i < data.size(); i++)
 		{
 			if (auto us = dynamic_cast<UltrasoundSweep*>(img[i]))
 				sweeps[i] = us;
-			else
+			else {
+				LOG_WARN("ConeCalibrationAlgorithm did not find an UltrasoundSweep");
 				return false;
+			}
 		}
 		if (a)
 			*a = new ConeCalibrationAlgorithm(sweeps);
