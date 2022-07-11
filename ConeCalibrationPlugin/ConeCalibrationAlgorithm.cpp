@@ -10,7 +10,7 @@
 #include <ImFusion/Core/Log.h>
 #include <ImFusion/Core/Timer.h>
 #include <ImFusion/Ext/fmt/format.h>
-#include <ImFusion/ML/MachineLearningModel.h>
+#include <ImFusion/ML/ImagewiseLearningModel.h>
 #include <ImFusion/ML/Operations.h>
 #include <ImFusion/Seg/SegmentedStructure.h>
 #include <ImFusion/US/UltrasoundCalibration.h>
@@ -296,17 +296,19 @@ namespace ImFusion
 		Timer timer;
 		if (sweepIndex >= m_segmentations.size())
 		{
-			ML::MachineLearningModel model(p_modelPath);
+			ML::ImagewiseLearningModel model(p_modelPath);
 			model.setProgress(m_progress);
-			std::unique_ptr<SharedImageSet> segmentation = model.predict(*us);
-			if (!segmentation)
+			DataList dl{us};
+			auto segmentation = model.predict(dl);
+			if (segmentation.size() == 0)
 			{
 				LOG_ERROR("Could not run segmentation");
 				return 0;
 			}
-			LOG_INFO("Model inference: " << timer.formatPassedAndReset());
-			auto cones = detectCones(segmentation.get(), sweepIndex);
-			m_segmentations.push_back(std::move(segmentation));
+			LOG_INFO("Model inference: " << timer.formatPassedAndReset() << " segmentation size " << segmentation.size());
+			auto sharedImageSet = segmentation.extractFirstImage();
+			auto cones = detectCones(sharedImageSet.get(), sweepIndex);
+			m_segmentations.push_back(std::move(sharedImageSet));
 			m_allCones.push_back(std::move(cones));
 		}
 

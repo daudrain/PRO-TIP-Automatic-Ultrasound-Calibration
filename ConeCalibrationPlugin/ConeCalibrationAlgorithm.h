@@ -2,7 +2,7 @@
 
 #include <ImFusion/Base/Algorithm.h>
 #include <ImFusion/Base/Geometry.h>
-#include <ImFusion/Core/Parameter.h>
+#include <ImFusion/Base/ParameterMixin.h>
 
 #include <unordered_map>
 
@@ -19,7 +19,7 @@ namespace ImFusion
 	  * The algorithm detects and matches cone tips between the sweeps and uses these matches to estimate the calibration.
 	  * The calibration is automatically refined using image based optimization.
 	  */
-	class ConeCalibrationAlgorithm : public Algorithm
+	class ConeCalibrationAlgorithm : public ParameterMixin<Algorithm>
 	{
 	public:
 		class TrackedCone
